@@ -1,0 +1,2 @@
+# Moj repozitorij
+ Svijet tartufa
