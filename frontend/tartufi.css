@@ -1,7 +1,7 @@
 *{
   width: 100%;
-   height: 100%;
-   overflow: hidden;
+   height: 100% vh;
+  
    margin: 0;
 }
 body{
@@ -11,9 +11,7 @@ body{
         font-size:large;
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
-        overflow: hidden;
-        
+        justify-content: space-between; 
         margin: 0;
         padding: 0;
     }
@@ -84,6 +82,13 @@ h3 {
         padding: 32px;
         border: 2px solid rgb(2, 29, 6);   
 }
+.slikaokusa {
+  height:"11vh"
+  
+}
+.tablica {
+  content: normal;
+}
 .okus{
   background-image: url(pozadina.jfif) ;
         background-blend-mode:inherit ;
@@ -148,10 +153,7 @@ h3 {
 }
 }
 @media only screen and (min-width:701px) {
-  *{
-      display:grid;
-      justify-content: center;
-  }
+  
   .header{
     
     background-image: url(pozadina.jfif);
