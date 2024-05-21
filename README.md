@@ -11,4 +11,4 @@ Ažuriranje recepata
 Brisanje recepata
 
 # Korišteni alati:
-Pri izradi web stranice koristila sam HTML, CSS i Javascript programske jezike. Sama struktura stranice obuhvaća zaglavlje,traku za navigaciju koja korisnika preusmjerava na ukupno 5 novih stranica,primarni sadržaj te podnožje stranice.Baza podataka kojom sam se služila je Mongo DB.
+Pri izradi web stranice koristila sam HTML, CSS i Javascript programske jezike. Koristila sam VS-code,Microsoftovo besplatno razvojno okruženje otvorenog koda. Sama struktura stranice obuhvaća zaglavlje,traku za navigaciju koja korisnika preusmjerava na ukupno 5 novih stranica,primarni sadržaj te podnožje stranice.Baza podataka kojom sam se služila je Mongo DB.
