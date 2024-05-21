@@ -1,102 +1,77 @@
-/*
-const container = document.getElementById("image-container")
-const handleOnDown = (e) => (container.dataset.mouseDownAt = e.clientX)
-const handleOnUp = () => {
-    container.dataset.mouseDownAt = "0"
-    container.dataset.prevPercentage = container.dataset.percentage
-}
-const handleOnMove = (e) => {
-    if(container.dataset.mouseDownAt === "0") return
-    const mouseDelta= parseFloat(container.dataset.mouseDownAt) -e.clientX
-    maxDelta= window.innerWidth / 2
-    const percentage = (mouseDelta / maxDelta) * -100,
-    nextPercentageUnconstrained =
-    parseFloat(container.dataset.prevPercentage) + percentage,
-    nextPercentage = Math.max (Math.min
-        (nextPercentageUnconstrained, 0) -100)
-    container.dataset.percentage = nextPercentage
-    container.animate( {
-        transform: `translate (${nextPercentage}%, -50%)`,
-    },
-    {duration: 1200, fill: "forwards"}
-)
-for (const image of container.getElementsByClassName("images_container")){
-    image.animate(
-        {objectPosition:`${100 + nextPercentage}% center`,},
-        {duration: 1200, fill: "forwards"}
-    )
-}
-}
-window.onmousedown = (e) => handleOnDown(e)
-window.ontouchstart = (e) => handleOnDown(e.touches[0])
-window.onmouseup = (e) => handleOnup(e)
-window.ontouchend = (e) => handleOnUp(e.touches[0])
-window.onmousemove = (e) => handleOnMove(e)
-window.ontouchmove = (e) => handleOnMove(e.touches[0])
+document.addEventListener('DOMContentLoaded', async () => {
+  const ReceptiDiv = document.getElementById('Recepti');
+  const forma = document.getElementById('forma');
+  await prikaziRecepti();
+  // Funkcija za prikaz svih recept
+  async function prikaziRecepti() {
+    ReceptiDiv.innerHTML = '';
 
-console.log(e);
-*/
-const express = require('express');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const app = express();
-app.use(bodyParser.json());
-app.use(cors()); 
-// Spajanje na MongoDB bazu
-mongoose.connect('mongodb://localhost:27017/recepti.Recepti').then(() => {
-  console.log('Uspješno povezan s bazom podataka');
-}).catch((err) => {
-  console.error('Greška prilikom povezivanja s bazom podataka', err);
-});
-// Definiranje modela Recept
-const Recept = mongoose.model('Recept', new mongoose.Schema({
-  naslov: String,
-  autor: String,
-  recept: String,
-}, { collection: 'Recepti' }));
-// GET ruta za dohvaćanje svih recepata
-app.get('/Recepti', async (req, res) => {
-  try {
-    const Recepti = await Recept.find();
-    res.json(Recepti);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const response = await fetch('http://localhost:3000/Recepti');
+    const Recepti = await response.json();
+
+    Recepti.forEach(recept => {
+      const receptDiv = document.createElement('div');
+      receptDiv.classList.add('recept');
+      receptDiv.innerHTML = `
+        <strong>${recept.title}</strong> - ${recept.author}
+        <button onclick="azurirajRecept('${recept._id}')">Ažuriraj</button>
+        <button onclick="obrisiRecept('${recept._id}')">Obriši</button>
+      `;
+      ReceptiDiv.appendChild(receptDiv);
+    });
   }
-});
-// POST ruta za dodavanje novog recepta
-app.post('/Recepti', async (req, res) => {
-  try {
-    const { naslov, autor, recept } = req.body;
-    const noviRecept = new Recept({ naslov, autor, recept });
-    const spremljenRecept = await noviRecept.save();
-    res.status(201).json(spremljenRecept);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-// PUT ruta za ažuriranje recepata
-app.put('/Recepti/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { naslov, autor, recept } = req.body;
-    const ažuriranRecept = await Recept.findByIdAndUpdate(id, { naslov, autor, recept }, { new: true });
-    res.json(ažuriranRecept);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-// DELETE ruta za brisanje recepta
-app.delete('/Recepti/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Recept.findByIdAndDelete(id);
-    res.sendStatus(204);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server sluša na portu ${port}`);
+
+  // Funkcija za dodavanje nove Recepti
+  forma.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const naslov = document.getElementById('title').value;
+    const autor = document.getElementById('author').value;
+    const recept = document.getElementById('recept_tekst').value;
+
+    const response = await fetch('http://localhost:3000/Recepti', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title: naslov, author: autor, recept_tekst: recept })
+    });
+
+    if (response.ok) {
+      prikaziRecepti();
+      forma.reset();
+    }
+  });
+
+  // Funkcija za ažuriranje Recepti
+  window.azurirajRecept = async (id) => {
+    const noviNaslov = prompt('Unesite novi naslov:');
+    const noviAutor = prompt('Unesite novog autora:');
+    const noviRecept = prompt('Unesite novi recept:');
+
+    const response = await fetch(`http://localhost:3000/Recepti/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title: noviNaslov, author: noviAutor, recept_tekst: recept })
+    });
+
+    if (response.ok) {
+      prikaziRecepti();
+    }
+  };
+
+  // Funkcija za brisanje Recepti
+  window.obrisiRecept = async (id) => {
+    const potvrda = confirm('Jeste li sigurni da želite obrisati Recept?');
+    if (potvrda) {
+      const response = await fetch(`http://localhost:3000/Recepti/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        prikaziRecepti();
+      }
+    }
+  };
+
+  // Inicijalno prikazivanje recept
+  prikaziRecepti();
 });

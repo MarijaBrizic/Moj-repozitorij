@@ -15,7 +15,7 @@ mongoose.connect('mongodb://localhost:27017/recepti.Recepti').then(() => {
 const Recept = mongoose.model('Recept', new mongoose.Schema({
   naslov: String,
   autor: String,
-  recept: String,
+  recept: String
 }, { collection: 'Recepti' }));
 // GET ruta za dohvaćanje svih recepata
 app.get('/Recepti', async (req, res) => {
