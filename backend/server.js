@@ -6,7 +6,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors()); 
 // Spajanje na MongoDB bazu
-mongoose.connect('mongodb://localhost:27017/recepti').then(() => {
+mongoose.connect('mongodb://127.0.0.1:27017/recepti').then(() => {
   console.log('Uspješno povezan s bazom podataka');
 }).catch((err) => {
   console.error('Greška prilikom povezivanja s bazom podataka', err);
