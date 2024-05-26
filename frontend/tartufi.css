@@ -73,8 +73,8 @@ h3 {
   
 }
 .tablica {
-  width: fit-content;
-  tab-size: 40% vh;
+  height: fit-content;
+  
 }
 .okus{
   background-image: url(pozadina.jfif) ;
