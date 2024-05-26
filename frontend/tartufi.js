@@ -1,19 +1,20 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const ReceptiDiv = document.getElementById('Recepti');
   const forma = document.getElementById('forma');
-  await prikaziRecepti();
+  
   // Funkcija za prikaz svih recepata
   async function prikaziRecepti() {
     ReceptiDiv.innerHTML = '';
 
-    const response = await fetch('127.0.0.1:3000/recepti');
+    const response = await fetch('http://localhost:3000/recepti');
     const Recepti = await response.json();
-
+    console.log("marija +++", Recepti) // provjera
     Recepti.forEach(recept => {
+      console.log("++++++", recept.naslov) //provjera
       const receptDiv = document.createElement('div');
       receptDiv.classList.add('recept');
       receptDiv.innerHTML = `
-        <strong>${recept.title}</strong> - ${recept.author}
+        <strong>${recept.naslov}</strong> - ${recept.autor}
         <button onclick="azurirajRecept('${recept._id}')">Ažuriraj</button>
         <button onclick="obrisiRecept('${recept._id}')">Obriši</button>
       `;
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const autor = document.getElementById('author').value;
     const recept = document.getElementById('recept_tekst').value;
 
-    const response = await fetch('127.0.0.1:3000/recepti', {
+    const response = await fetch('http://localhost:3000/recepti', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -48,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const noviAutor = prompt('Unesite novog autora:');
     const noviRecept = prompt('Unesite novi recept:');
 
-    const response = await fetch(`127.0.0.1:3000/recepti/${id}`, {
+    const response = await fetch(`http://localhost:3000/recepti/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.obrisiRecept = async (id) => {
     const potvrda = confirm('Jeste li sigurni da želite obrisati Recept?');
     if (potvrda) {
-      const response = await fetch(`127.0.0.1:3000/recepti/${id}`, { method: 'DELETE' });
+      const response = await fetch(`http://localhost:3000/recepti/${id}`, { method: 'DELETE' });
       if (response.ok) {
         prikaziRecepti();
       }
